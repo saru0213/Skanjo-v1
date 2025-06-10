@@ -1,8 +1,5 @@
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Target, TrendingUp, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+
 import { HeroSection } from "@/components/landing/HeroSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { StatsSection } from "@/components/landing/StatsSection";
