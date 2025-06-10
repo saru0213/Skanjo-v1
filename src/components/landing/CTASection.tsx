@@ -28,7 +28,7 @@ export const CTASection = () => {
           </h2>
           
           <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-            Join thousands of professionals who have already transformed their careers with SkillForge AI.
+            Join thousands of professionals who have already transformed their careers with Skanjo AI.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
