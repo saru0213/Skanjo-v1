@@ -8,6 +8,7 @@ export interface ApiKeyResponse {
   api_key: string;
   message?: string;
 }
+const API_BASE_URL = "https://screening-api.skanjo.com";
 
 export const createApiKey = async ({
   email,
@@ -16,7 +17,7 @@ export const createApiKey = async ({
 }: ApiKeyRequest): Promise<ApiKeyResponse> => {
   const authString = btoa(`${adminUsername}:${adminPassword}`);
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/add-client`, {
+  const response = await fetch(`${API_BASE_URL}/add-client`, {
     method: "POST",
     headers: {
       Authorization: `Basic ${authString}`,
