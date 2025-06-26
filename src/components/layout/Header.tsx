@@ -36,6 +36,9 @@ export const Header = () => {
             <Link to="/pricing" className="text-foreground/70 hover:text-primary transition-colors duration-200">
               Pricing
             </Link>
+            <Link to="/docs" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+              Docs
+            </Link>
           </nav>
 
           {/* Desktop CTA */}
@@ -72,6 +75,9 @@ export const Header = () => {
               </Link>
               <Link to="/pricing" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
                 Pricing
+              </Link>
+              <Link to="/docs" className="block text-foreground/70 hover:text-primary transition-colors duration-200">Add commentMore actions
+                Docs
               </Link>
               <div className="pt-4 space-y-3">
                 <Button variant="ghost" className="w-full" asChild>
