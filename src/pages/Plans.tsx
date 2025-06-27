@@ -111,7 +111,18 @@ const Plans = () => {
   const navigate = useNavigate();
 
   const handlePlanSelect = (plan: (typeof plans)[0]) => {
-    navigate("/checkout", { state: { plan } });
+    // passing only serializable data, exclude React components
+    const planData = {
+      name: plan.name,
+      price: plan.price,
+      period: plan.period,
+      description: plan.description,
+      features: plan.features,
+      limitations: plan.limitations,
+      cta: plan.cta,
+      popular: plan.popular
+    };
+    navigate("/checkout", { state: { plan: planData } });
   };
 
   return (
