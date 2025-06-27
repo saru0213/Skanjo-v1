@@ -110,8 +110,13 @@ const faqs = [
 const Plans = () => {
   const navigate = useNavigate();
 
-  const handlePlanSelect = (plan: any) => {
-    navigate("/checkout", { state: { plan } });
+  const handlePlanSelect = (plan: (typeof plans)[0]) => {
+    console.log("Plan selected:", plan);
+    try {
+      navigate("/checkout", { state: { plan } });
+    } catch (error) {
+      console.error("Navigation error:", error);
+    }
   };
 
   return (
@@ -209,7 +214,11 @@ const Plans = () => {
                   <div className="mt-auto">
                     <Button
                       className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 shadow-lg shadow-primary/25 transition-all duration-300"
-                      onClick={() => handlePlanSelect(plan)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        console.log("Button clicked for plan:", plan.name);
+                        handlePlanSelect(plan);
+                      }}
                     >
                       <span className="flex items-center justify-center space-x-2">
                         <span>{plan.cta}</span>
@@ -303,13 +312,16 @@ const Plans = () => {
             </p>
             <Button
               size="lg"
-              asChild
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-300 text-lg px-8 py-6 rounded-xl shadow-lg shadow-primary/25"
+              onClick={() =>
+                navigate("/checkout", { state: { plan: plans[0] } })
+              }
             >
-              <Link to="/checkout" className="flex items-center space-x-2">
+              <span className="flex items-center space-x-2">
                 <span>Start Free Trial</span>
                 <ArrowRight className="h-5 w-5" />
-              </Link>
+                Add commentMore actions
+              </span>
             </Button>
           </div>
         </div>
