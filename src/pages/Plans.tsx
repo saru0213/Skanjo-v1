@@ -111,12 +111,7 @@ const Plans = () => {
   const navigate = useNavigate();
 
   const handlePlanSelect = (plan: (typeof plans)[0]) => {
-    console.log("Plan selected:", plan);
-    try {
-      navigate("/checkout", { state: { plan } });
-    } catch (error) {
-      console.error("Navigation error:", error);
-    }
+    navigate("/checkout", { state: { plan } });
   };
 
   return (
@@ -214,11 +209,8 @@ const Plans = () => {
                   <div className="mt-auto">
                     <Button
                       className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 shadow-lg shadow-primary/25 transition-all duration-300"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log("Button clicked for plan:", plan.name);
-                        handlePlanSelect(plan);
-                      }}
+                      type="button"
+                      onClick={() => handlePlanSelect(plan)}
                     >
                       <span className="flex items-center justify-center space-x-2">
                         <span>{plan.cta}</span>
@@ -313,9 +305,7 @@ const Plans = () => {
             <Button
               size="lg"
               className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-300 text-lg px-8 py-6 rounded-xl shadow-lg shadow-primary/25"
-              onClick={() =>
-                navigate("/checkout", { state: { plan: plans[0] } })
-              }
+              onClick={() => handlePlanSelect(plans[0])}
             >
               <span className="flex items-center space-x-2">
                 <span>Start Free Trial</span>
