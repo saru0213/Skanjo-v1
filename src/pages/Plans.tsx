@@ -226,7 +226,6 @@ const Plans = () => {
                       <span className="flex items-center justify-center space-x-2">
                         <span>{plan.cta}</span>
                         <ArrowRight className="h-4 w-4" />
-                        Add commentMore actions
                       </span>
                     </Button>
                   </div>
@@ -321,7 +320,6 @@ const Plans = () => {
               <span className="flex items-center space-x-2">
                 <span>Start Free Trial</span>
                 <ArrowRight className="h-5 w-5" />
-                Add commentMore actions
               </span>
             </Button>
           </div>
