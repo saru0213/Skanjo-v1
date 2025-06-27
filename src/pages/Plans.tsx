@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const plans = [
   {
@@ -107,7 +107,13 @@ const faqs = [
   },
 ];
 
-const Pricing = () => {
+const Plans = () => {
+  const navigate = useNavigate();
+
+  const handlePlanSelect = (plan: any) => {
+    navigate("/checkout", { state: { plan } });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
       <Header />
@@ -119,7 +125,7 @@ const Pricing = () => {
             <div className="inline-flex items-center space-x-2 bg-primary/10 backdrop-blur-sm rounded-full px-6 py-2 mb-8 border border-primary/20">
               <Sparkles className="h-4 w-4 text-primary" />
               <span className="text-sm font-medium text-primary">
-                Simple & Transparent Pricing
+                Simple & Transparent Plans
               </span>
             </div>
 
@@ -141,7 +147,7 @@ const Pricing = () => {
         </div>
       </section>
 
-      {/* Pricing Cards */}
+      {/* Plans Cards */}
       <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -203,19 +209,13 @@ const Pricing = () => {
                   <div className="mt-auto">
                     <Button
                       className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 shadow-lg shadow-primary/25 transition-all duration-300"
-                      asChild={plan.name !== "Enterprise"}
+                      onClick={() => handlePlanSelect(plan)}
                     >
-                      {plan.name === "Enterprise" ? (
+                      <span className="flex items-center justify-center space-x-2">
                         <span>{plan.cta}</span>
-                      ) : (
-                        <Link
-                          to="/analyze"
-                          className="flex items-center justify-center space-x-2"
-                        >
-                          <span>{plan.cta}</span>
-                          <ArrowRight className="h-4 w-4" />
-                        </Link>
-                      )}
+                        <ArrowRight className="h-4 w-4" />
+                        Add commentMore actions
+                      </span>
                     </Button>
                   </div>
                 </CardContent>
@@ -320,4 +320,4 @@ const Pricing = () => {
   );
 };
 
-export default Pricing;
+export default Plans;
