@@ -206,7 +206,7 @@ const Features = () => {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="text-lg px-8 py-6 rounded-xl border-2 hover:bg-accent/50 transition-all duration-300">
-                <Link to="/pricing">View Pricing</Link>
+                <Link to="/plans">View Plans</Link>
               </Button>
             </div>
           </div>

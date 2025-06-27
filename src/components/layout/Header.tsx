@@ -33,8 +33,8 @@ export const Header = () => {
             <Link to="/features" className="text-foreground/70 hover:text-primary transition-colors duration-200">
               Features
             </Link>
-            <Link to="/pricing" className="text-foreground/70 hover:text-primary transition-colors duration-200">
-              Pricing
+            <Link to="/plans" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+              Plans
             </Link>
             <Link to="/docs" className="text-foreground/70 hover:text-primary transition-colors duration-200">
               Docs
@@ -73,8 +73,8 @@ export const Header = () => {
               <Link to="/features" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
                 Features
               </Link>
-              <Link to="/pricing" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
-                Pricing
+              <Link to="/plans" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+                Plans
               </Link>
               <Link to="/docs" className="block text-foreground/70 hover:text-primary transition-colors duration-200">Add commentMore actions
                 Docs
