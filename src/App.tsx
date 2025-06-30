@@ -12,6 +12,7 @@ import Signup from "./pages/Signup";
 import Checkout from "./pages/Checkout";
 import Docs from "./pages/Docs";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./auth/AuthContext";
 
 const queryClient = new QueryClient();
 
@@ -21,18 +22,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/analyze" element={<Analyze />} />
-          <Route path="/features" element={<Features />} />
-          <Route path="/plans" element={<Plans />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/docs" element={<Docs />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/analyze" element={<Analyze />} />
+            <Route path="/features" element={<Features />} />
+            <Route path="/plans" element={<Plans />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/docs" element={<Docs />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

@@ -1,11 +1,12 @@
-
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "@/auth/AuthContext";
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated, logout } = useContext(AuthContext);
 
   return (
     <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
@@ -43,12 +44,18 @@ export const Header = () => {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link to="/login">Sign In</Link>
-            </Button>
-            <Button asChild className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-200 rounded-xl shadow-lg shadow-primary/25">
-              <Link to="/analyze">Get Started</Link>
-            </Button>
+            {isAuthenticated ? (
+              <Button variant="ghost" onClick={logout}>Logout</Button>
+            ) : (
+              <>
+                <Button variant="ghost" asChild>
+                  <Link to="/login">Sign In</Link>
+                </Button>
+                <Button asChild className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-200 rounded-xl shadow-lg shadow-primary/25">
+                  <Link to="/analyze">Get Started</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -76,16 +83,22 @@ export const Header = () => {
               <Link to="/plans" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
                 Plans
               </Link>
-              <Link to="/docs" className="block text-foreground/70 hover:text-primary transition-colors duration-200">Add commentMore actions
+              <Link to="/docs" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
                 Docs
               </Link>
               <div className="pt-4 space-y-3">
-                <Button variant="ghost" className="w-full" asChild>
-                  <Link to="/login">Sign In</Link>
-                </Button>
-                <Button className="w-full bg-gradient-to-r from-primary to-primary/80 rounded-xl" asChild>
-                  <Link to="/analyze">Get Started</Link>
-                </Button>
+                {isAuthenticated ? (
+                  <Button variant="ghost" className="w-full" onClick={logout}>Logout</Button>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="w-full" asChild>
+                      <Link to="/login">Sign In</Link>
+                    </Button>
+                    <Button className="w-full bg-gradient-to-r from-primary to-primary/80 rounded-xl" asChild>
+                      <Link to="/analyze">Get Started</Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>

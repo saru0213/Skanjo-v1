@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,10 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react";
+import { loginUser } from "@/services/apiService";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "@/auth/AuthContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,17 +21,42 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { isAuthenticated, login } = useContext(AuthContext);
+
+  useEffect(() => { if (isAuthenticated) navigate("/"); }, [isAuthenticated]);
+
   const handleGoogleLogin = () => {
     setIsLoading(true);
     // TODO: Simulate API call
     setTimeout(() => setIsLoading(false), 2000);
   };
 
-  const handleNormalLogin = (e: React.FormEvent) => {
+  const validateForm = () => {
+    if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) return "Invalid email address.";
+    if (!password || password.length < 8) return "Password must be at least 8 characters.";
+    return null;
+  };
+
+  const handleNormalLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const error = validateForm();
+    if (error) {
+      toast({ title: "Login Error", description: error, variant: "destructive" });
+      return;
+    }
     setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => setIsLoading(false), 2000);
+    try {
+      const user = await loginUser({ email, password });
+      toast({ title: "Login Successful", description: "Welcome back!", variant: "default" });
+      login(user);
+      navigate("/");
+    } catch (err: any) {
+      toast({ title: "Login Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,7 +125,7 @@ const Login = () => {
               </div>
 
               {/* Normal Login Form */}
-              <form onSubmit={handleNormalLogin} className="space-y-5">
+              <form onSubmit={handleNormalLogin} className="space-y-5" disabled={isAuthenticated}>
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-foreground/90">
                     Email Address

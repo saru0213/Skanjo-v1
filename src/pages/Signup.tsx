@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Lock, Sparkles, User, Phone, Building, Briefcase } from "lucide-react";
+import { registerUser } from "@/services/apiService";
+import { useToast } from "@/hooks/use-toast";
+import { useContext } from "react";
+import { AuthContext } from "@/auth/AuthContext";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +26,11 @@ const Signup = () => {
     password: ""
   });
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const { isAuthenticated, login } = useContext(AuthContext);
+
+  useEffect(() => { if (isAuthenticated) navigate("/"); }, [isAuthenticated]);
 
   const handleGoogleSignup = () => {
     setIsLoading(true);
@@ -30,12 +38,35 @@ const Signup = () => {
     setTimeout(() => setIsLoading(false), 2000);
   };
 
-  const handleNormalSignup = (e: React.FormEvent) => {
+  const validateForm = () => {
+    if (!formData.name.trim()) return "Name is required.";
+    if (!formData.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) return "Invalid email address.";
+    if (!formData.phone.match(/^\+?\d{10,15}$/)) return "Invalid phone number.";
+    if (!formData.company_name.trim()) return "Company name is required.";
+    if (!formData.position.trim()) return "Position is required.";
+    if (formData.password.length < 8) return "Password must be at least 8 characters.";
+    if (!agreeToTerms) return "You must agree to the terms.";
+    return null;
+  };
+
+  const handleNormalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    const error = validateForm();
+    if (error) {
+      toast({ title: "Signup Error", description: error, variant: "destructive" });
+      return;
+    }
     setIsLoading(true);
-    console.log("Signup data:", formData);
-    // Simulate API call
-    setTimeout(() => setIsLoading(false), 2000);
+    try {
+      const user = await registerUser(formData);
+      toast({ title: "Signup Successful", description: "Welcome to SKANJO!", variant: "default" });
+      login(user);
+      navigate("/");
+    } catch (err: any) {
+      toast({ title: "Signup Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -108,7 +139,7 @@ const Signup = () => {
               </div>
 
               {/* Normal Signup Form */}
-              <form onSubmit={handleNormalSignup} className="space-y-4">
+              <form onSubmit={handleNormalSignup} className="space-y-4" disabled={isAuthenticated}>
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-medium text-foreground/90">
                     Full Name
