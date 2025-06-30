@@ -1,4 +1,3 @@
-
 import { CheckCircle, Target, Zap, TrendingUp, Download, BookOpen, Award, ArrowRight, Star, Users, Brain, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

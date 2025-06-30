@@ -11,6 +11,9 @@ import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "@/auth/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 
 const plans = [
   {
@@ -109,8 +112,14 @@ const faqs = [
 
 const Plans = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
+  const { toast } = useToast();
 
   const handlePlanSelect = (plan: (typeof plans)[0]) => {
+    if (!isAuthenticated) {
+      toast({ title: "Sign In Required", description: "Please sign in to purchase a plan.", variant: "destructive" });
+      return;
+    }
     // passing only serializable data, exclude React components
     const planData = {
       name: plan.name,

@@ -32,12 +32,6 @@ export const Header = () => {
               Home
             </Link>
             <Link
-              to="/analyze"
-              className="text-foreground/70 hover:text-primary transition-colors duration-200"
-            >
-              Analyze CV
-            </Link>
-            <Link
               to="/features"
               className="text-foreground/70 hover:text-primary transition-colors duration-200"
             >
@@ -48,12 +42,6 @@ export const Header = () => {
               className="text-foreground/70 hover:text-primary transition-colors duration-200"
             >
               Plans
-            </Link>
-            <Link
-              to="/docs"
-              className="text-foreground/70 hover:text-primary transition-colors duration-200"
-            >
-              Docs
             </Link>
             <Link
               to="/docs"
@@ -112,12 +100,6 @@ export const Header = () => {
                 className="block text-foreground/70 hover:text-primary transition-colors duration-200"
               >
                 Home
-              </Link>
-              <Link
-                to="/analyze"
-                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
-              >
-                Analyze CV
               </Link>
               <Link
                 to="/features"

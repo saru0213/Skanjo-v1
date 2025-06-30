@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,8 @@ import {
   Lock,
   Award,
 } from "lucide-react";
+import { AuthContext } from "@/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type FormData = {
   name: string;
@@ -80,6 +82,8 @@ const Checkout = () => {
     numberOfPeople: "",
   });
   const [errors, setErrors] = useState<Partial<FormData>>({});
+  const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // Mock plan details
   const plan = {
@@ -225,6 +229,11 @@ const Checkout = () => {
   }, 2000);
 };
 
+useEffect(() => {
+  if (!isAuthenticated) {
+    navigate("/login");
+  }
+}, [isAuthenticated, navigate]);
 
   if (apiKey) {
     return (
