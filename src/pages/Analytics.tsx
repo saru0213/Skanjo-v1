@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Header } from "@/components/layout/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,10 +50,31 @@ import {
   DollarSign,
   TrendingDown
 } from 'lucide-react';
+import { AuthContext } from '@/auth/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState('7d');
   const [selectedMetric, setSelectedMetric] = useState('all');
+  const { isAuthenticated } = useContext(AuthContext);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast({
+        title: 'Sign In Required',
+        description: 'Please sign in to access analytics.',
+        variant: 'destructive',
+      });
+      navigate('/login');
+    }
+  }, [isAuthenticated, toast, navigate]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Enhanced mock data with more detailed metrics
   const overviewStats = [
