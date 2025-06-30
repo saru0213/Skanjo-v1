@@ -25,33 +25,65 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+            <Link
+              to="/"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
               Home
             </Link>
-            <Link to="/analyze" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+            <Link
+              to="/analyze"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
               Analyze CV
             </Link>
-            <Link to="/features" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+            <Link
+              to="/features"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
               Features
             </Link>
-            <Link to="/plans" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+            <Link
+              to="/plans"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
               Plans
             </Link>
-            <Link to="/docs" className="text-foreground/70 hover:text-primary transition-colors duration-200">
+            <Link
+              to="/docs"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
               Docs
+            </Link>
+            <Link
+              to="/docs"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
+              Docs
+            </Link>
+            <Link
+              to="/analytics"
+              className="text-foreground/70 hover:text-primary transition-colors duration-200"
+            >
+              Analytics
             </Link>
           </nav>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
-              <Button variant="ghost" onClick={logout}>Logout</Button>
+              <Button variant="ghost" onClick={logout}>
+                Logout
+              </Button>
             ) : (
               <>
                 <Button variant="ghost" asChild>
                   <Link to="/login">Sign In</Link>
                 </Button>
-                <Button asChild className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-200 rounded-xl shadow-lg shadow-primary/25">
+                <Button
+                  asChild
+                  className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-200 rounded-xl shadow-lg shadow-primary/25"
+                >
                   <Link to="/analyze">Get Started</Link>
                 </Button>
               </>
@@ -63,7 +95,11 @@ export const Header = () => {
             className="md:hidden p-2 rounded-lg hover:bg-accent transition-colors duration-200"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </button>
         </div>
 
@@ -71,30 +107,50 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-xl border-b border-border/50 animate-fade-in">
             <nav className="container mx-auto px-4 py-6 space-y-4">
-              <Link to="/" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+              <Link
+                to="/"
+                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
+              >
                 Home
               </Link>
-              <Link to="/analyze" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+              <Link
+                to="/analyze"
+                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
+              >
                 Analyze CV
               </Link>
-              <Link to="/features" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+              <Link
+                to="/features"
+                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
+              >
                 Features
               </Link>
-              <Link to="/plans" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+              <Link
+                to="/plans"
+                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
+              >
                 Plans
               </Link>
-              <Link to="/docs" className="block text-foreground/70 hover:text-primary transition-colors duration-200">
+              <Link
+                to="/docs"
+                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
+              >
                 Docs
               </Link>
               <div className="pt-4 space-y-3">
                 {isAuthenticated ? (
-                  <Button variant="ghost" className="w-full" onClick={logout}>Logout</Button>
+                  <Button variant="ghost" className="w-full" onClick={logout}>
+                    Logout
+                  </Button>
                 ) : (
                   <>
                     <Button variant="ghost" className="w-full" asChild>
                       <Link to="/login">Sign In</Link>
                     </Button>
-                    <Button className="w-full bg-gradient-to-r from-primary to-primary/80 rounded-xl" asChild>
+                    <Button
+                      className="w-full bg-gradient-to-r from-primary to-primary/80 rounded-xl"
+                      asChild
+                    >
                       <Link to="/analyze">Get Started</Link>
                     </Button>
                   </>
