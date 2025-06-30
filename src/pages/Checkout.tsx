@@ -144,107 +144,101 @@ const Checkout = () => {
 
   if (apiKey) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/5">
+      <div className="min-h-screen bg-background">
         <Header />
-        
         <section className="pt-24 pb-16">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
               {/* Success Animation */}
               <div className="text-center mb-8 animate-fade-in">
-                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 mb-6 mx-auto shadow-2xl animate-scale-in">
-                  <CheckCircle className="h-12 w-12 text-white" />
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-accent mb-6 mx-auto shadow-2xl animate-scale-in">
+                  <CheckCircle className="h-10 w-10 text-primary" />
                 </div>
-                <h1 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
+                <h1 className="text-3xl sm:text-4xl font-bold mb-2 text-foreground">
                   Success!
                 </h1>
-                <p className="text-xl text-muted-foreground">
+                <p className="text-lg text-muted-foreground">
                   Your {plan.name} plan is now active and ready to use
                 </p>
               </div>
-
-              <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                
-                <CardHeader className="pb-8 relative z-10">
-                  <div className="flex items-center justify-center space-x-3 mb-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-r ${getPlanColor()} text-white shadow-lg`}>
+              <Card className="bg-card border border-border">
+                <CardHeader>
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <div className="p-3 rounded-xl bg-accent text-foreground shadow-lg">
                       {getPlanIcon()}
                     </div>
                     <div>
-                      <CardTitle className="text-2xl font-bold">
+                      <CardTitle className="text-xl font-bold text-foreground">
                         {plan.name} Plan Activated
                       </CardTitle>
-                      <CardDescription className="text-lg">
+                      <CardDescription className="text-base text-muted-foreground">
                         {plan.description}
                       </CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                
-                <CardContent className="space-y-8 relative z-10">
+                <CardContent className="space-y-8">
                   {/* API Key Section */}
-                  <div className="p-6 bg-accent/10 rounded-2xl border border-border/50">
-                    <Label className="text-lg font-semibold text-foreground mb-4 block flex items-center">
+                  <div className="p-6 bg-muted rounded-2xl border border-border">
+                    <Label className="text-base font-semibold text-foreground mb-4 block flex items-center">
                       <Key className="h-5 w-5 mr-2 text-primary" />
                       Your API Key
                     </Label>
                     <div className="flex items-center space-x-3">
-                      <div className="flex-1 p-4 bg-background rounded-xl border border-border/50 font-mono text-sm break-all shadow-inner">
+                      <div className="flex-1 p-4 bg-background rounded-xl border border-border font-mono text-sm break-all shadow-inner">
                         {apiKey}
                       </div>
                       <Button
                         variant="outline"
                         size="lg"
                         onClick={copyApiKey}
-                        className="flex-shrink-0 h-14 px-6 hover:bg-accent/50 transition-all duration-200 hover:scale-105"
+                        className="flex-shrink-0 h-12 px-6 hover:bg-accent/50 transition-all duration-200 hover:scale-105"
                       >
                         <Copy className="h-5 w-5" />
                       </Button>
                     </div>
                   </div>
-                  
                   {/* Security Notice */}
-                  <div className="p-6 bg-blue-500/10 rounded-2xl border border-blue-500/20">
+                  <div className="p-6 bg-accent rounded-2xl border border-border">
                     <div className="flex items-start space-x-3">
-                      <div className="p-2 bg-blue-500/20 rounded-lg">
-                        <Shield className="h-6 w-6 text-blue-600" />
+                      <div className="p-2 bg-muted rounded-lg">
+                        <Shield className="h-6 w-6 text-primary" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-blue-800 mb-2 text-lg">Security Guidelines</h4>
-                        <ul className="text-blue-700 space-y-2">
+                        <h4 className="font-semibold text-foreground mb-2 text-base">Security Guidelines</h4>
+                        <ul className="text-muted-foreground space-y-2 text-sm">
                           <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2 text-blue-600" />
+                            <Check className="h-4 w-4 mr-2 text-green-500" />
                             Keep your API key secure and never share it publicly
                           </li>
                           <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2 text-blue-600" />
+                            <Check className="h-4 w-4 mr-2 text-green-500" />
                             Use this key in your API requests for authentication
                           </li>
                           <li className="flex items-center">
-                            <Check className="h-4 w-4 mr-2 text-blue-600" />
+                            <Check className="h-4 w-4 mr-2 text-green-500" />
                             Monitor your usage through our analytics dashboard
                           </li>
                         </ul>
                       </div>
                     </div>
                   </div>
-
                   {/* Next Steps */}
                   <div className="grid md:grid-cols-2 gap-6">
                     <Button 
                       onClick={() => navigate("/docs")}
+                      variant="default"
                       size="lg"
-                      className="h-16 text-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+                      className="h-12 text-base font-semibold"
                     >
-                      <Key className="h-6 w-6 mr-3" />
+                      <Key className="h-5 w-5 mr-2" />
                       View Documentation
                     </Button>
                     <Button 
                       variant="outline"
                       onClick={() => navigate("/")}
                       size="lg"
-                      className="h-16 text-lg border-2 hover:bg-accent/50 transition-all duration-200 hover:scale-105"
+                      className="h-12 text-base font-semibold"
                     >
                       Back to Dashboard
                     </Button>
@@ -254,7 +248,6 @@ const Checkout = () => {
             </div>
           </div>
         </section>
-        
         <Footer />
       </div>
     );
@@ -265,27 +258,29 @@ const Checkout = () => {
       <Header />
       
       <section className="pt-24 pb-16 relative overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-accent/5 to-background" />
-        
+        <div className="absolute inset-0 bg-background" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-5xl mx-auto">
             {/* Header Section */}
-            <div className="text-center mb-16 animate-fade-in">
-              <div className="inline-flex items-center space-x-2 bg-primary/10 backdrop-blur-sm rounded-full px-6 py-2 mb-8 border border-primary/20">
-                <Star className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">Secure Checkout</span>
-              </div>
-              
-              <div className="inline-flex items-center space-x-4 mb-6">
-                <div className={`p-4 rounded-2xl bg-gradient-to-r ${getPlanColor()} text-white shadow-2xl`}>
-                  {getPlanIcon()}
+            <div className="mb-12 animate-fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  {/* <div className="inline-flex items-center bg-muted px-4 py-1 rounded-full border border-border">
+                    <Star className="h-4 w-4 text-primary mr-2" />
+                    <span className="text-xs font-medium text-muted-foreground">Secure Checkout</span>
+                  </div> */}
+                  <div className="flex items-center gap-3">
+                    <div className="p-3 rounded-xl bg-accent text-foreground shadow-lg">
+                      {getPlanIcon()}
+                    </div>
+                    <span className="font-semibold text-lg text-foreground">{plan.name} Plan</span>
+                  </div>
                 </div>
                 <div className="text-left">
-                  <h1 className="text-4xl sm:text-5xl font-bold mb-2">
-                    Complete Your <span className={`bg-gradient-to-r ${getPlanColor()} bg-clip-text text-transparent`}>{plan.name}</span> Setup
+                  <h1 className="text-3xl sm:text-4xl font-bold mb-1 text-foreground">
+                    Complete Your <span className="text-primary">{plan.name}</span> Setup
                   </h1>
-                  <p className="text-xl text-muted-foreground">
+                  <p className="text-base text-muted-foreground">
                     {plan.price === "Free" ? "Get instant access to your API key" : "Secure checkout for premium features"}
                   </p>
                 </div>
@@ -295,59 +290,38 @@ const Checkout = () => {
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Left Column - Plan Details */}
               <div className="lg:col-span-1 space-y-6">
-                <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <CardHeader className="relative z-10">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-4 h-4 rounded-full bg-gradient-to-r ${getPlanColor()}`} />
-                      <CardTitle className="text-xl">
-                        {plan.name} Plan
-                      </CardTitle>
+                <Card className="bg-card border border-border">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full bg-accent" />
+                      <CardTitle className="text-xl text-foreground">{plan.name} Plan</CardTitle>
                     </div>
-                    <CardDescription className="text-lg">
-                      {plan.description}
-                    </CardDescription>
+                    <CardDescription className="text-base text-muted-foreground">{plan.description}</CardDescription>
                   </CardHeader>
-                  <CardContent className="relative z-10">
-                    <div className="text-center py-6">
-                      <div className={`text-4xl font-bold bg-gradient-to-r ${getPlanColor()} bg-clip-text text-transparent mb-2`}>
-                        {plan.price}{plan.period || ""}
-                      </div>
+                  <CardContent>
+                    <div className="text-center py-4">
+                      <div className="text-3xl font-bold text-foreground mb-1">{plan.price}{plan.period || ""}</div>
                       {plan.price !== "Free" && (
-                        <p className="text-muted-foreground">per {plan.period?.replace("/", "") || "month"}</p>
+                        <p className="text-sm text-muted-foreground">per {plan.period?.replace("/", "") || "month"}</p>
                       )}
                     </div>
-                    
                     {/* Plan Features */}
-                    <div className="space-y-3">
-                      <div className="flex items-center space-x-3">
-                        <Check className="h-5 w-5 text-green-500" />
-                        <span>API Access</span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Users className="h-5 w-5 text-blue-500" />
-                        <span>Team Collaboration</span>
-                      </div>
-                      <div className="flex items-center space-x-3">
-                        <Clock className="h-5 w-5 text-purple-500" />
-                        <span>24/7 Support</span>
-                      </div>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2 text-muted-foreground"><Check className="h-4 w-4 text-green-500" /><span>API Access</span></div>
+                      <div className="flex items-center gap-2 text-muted-foreground"><Users className="h-4 w-4 text-blue-500" /><span>Team Collaboration</span></div>
+                      <div className="flex items-center gap-2 text-muted-foreground"><Clock className="h-4 w-4 text-purple-500" /><span>24/7 Support</span></div>
                     </div>
                   </CardContent>
                 </Card>
-
                 {/* Trust Indicators */}
-                <Card className="bg-card/50 backdrop-blur-sm border-border/50 hover:shadow-xl transition-all duration-300">
+                <Card className="bg-muted border border-border">
                   <CardContent className="pt-6">
                     <div className="text-center space-y-4">
-                      <div className="w-16 h-16 bg-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <Shield className="h-8 w-8 text-green-500" />
+                      <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center mx-auto mb-2">
+                        <Shield className="h-6 w-6 text-primary" />
                       </div>
-                      <h3 className="font-semibold text-lg">Secure & Trusted</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Your data is protected with enterprise-grade security
-                      </p>
+                      <h3 className="font-semibold text-base text-foreground">Secure & Trusted</h3>
+                      <p className="text-xs text-muted-foreground">Your data is protected with enterprise-grade security</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -355,20 +329,15 @@ const Checkout = () => {
 
               {/* Right Column - Form */}
               <div className="lg:col-span-2">
-                <Card className="group relative overflow-hidden bg-card/50 backdrop-blur-sm border-border/50 hover:border-primary/20 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                  
-                  <CardHeader className="relative z-10">
-                    <CardTitle className="text-2xl flex items-center">
-                      <CreditCard className="h-6 w-6 mr-3 text-primary" />
+                <Card className="bg-card border border-border">
+                  <CardHeader>
+                    <CardTitle className="text-xl flex items-center text-foreground">
+                      <CreditCard className="h-5 w-5 mr-2 text-primary" />
                       {plan.price === "Free" ? "Get Your API Key" : "Billing Information"}
                     </CardTitle>
-                    <CardDescription className="text-lg">
-                      Please provide your details to continue
-                    </CardDescription>
+                    <CardDescription className="text-base text-muted-foreground">Please provide your details to continue</CardDescription>
                   </CardHeader>
-                  
-                  <CardContent className="relative z-10">
+                  <CardContent>
                     <Form {...form}>
                       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <div className="grid md:grid-cols-2 gap-6">
@@ -467,11 +436,7 @@ const Checkout = () => {
                           )}
                         />
                         
-                        <Button 
-                          type="submit" 
-                          className={`w-full h-14 text-lg font-semibold bg-gradient-to-r ${getPlanColor()} hover:shadow-2xl transition-all duration-200 hover:scale-[1.02]`}
-                          disabled={isProcessing}
-                        >
+                        <Button type="submit" variant="default" className="w-full h-12 text-base font-semibold" disabled={isProcessing}>
                           {isProcessing ? (
                             <div className="flex items-center space-x-2">
                               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
@@ -483,32 +448,24 @@ const Checkout = () => {
                         </Button>
                       </form>
                     </Form>
-                    
                     {showPayment && (
-                      <div className="mt-8 p-8 bg-accent/10 rounded-2xl border border-border/50 animate-fade-in">
-                        <div className="text-center mb-6">
-                          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 mb-4">
-                            <CreditCard className="h-8 w-8 text-white" />
+                      <div className="mt-8 p-6 bg-muted rounded-xl border border-border animate-fade-in">
+                        <div className="text-center mb-4">
+                          <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-accent mb-2">
+                            <CreditCard className="h-6 w-6 text-primary" />
                           </div>
-                          <h3 className="font-bold text-2xl mb-2">Secure Payment</h3>
-                          <p className="text-muted-foreground text-lg">
-                            Complete your payment to activate your {plan.name} plan
-                          </p>
+                          <h3 className="font-bold text-lg mb-1 text-foreground">Secure Payment</h3>
+                          <p className="text-sm text-muted-foreground">Complete your payment to activate your {plan.name} plan</p>
                         </div>
-                        
-                        <Button 
-                          onClick={handlePayment}
-                          className={`w-full h-16 text-xl font-semibold bg-gradient-to-r ${getPlanColor()} hover:shadow-2xl transition-all duration-200 hover:scale-[1.02]`}
-                          disabled={isProcessing}
-                        >
+                        <Button onClick={handlePayment} variant="default" className="w-full h-12 text-base font-semibold" disabled={isProcessing}>
                           {isProcessing ? (
-                            <div className="flex items-center space-x-3">
-                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                            <div className="flex items-center space-x-2">
+                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                               <span>Processing Payment...</span>
                             </div>
                           ) : (
-                            <div className="flex items-center space-x-3">
-                              <CreditCard className="h-6 w-6" />
+                            <div className="flex items-center space-x-2">
+                              <CreditCard className="h-5 w-5" />
                               <span>Pay {plan.price}{plan.period || ""}</span>
                             </div>
                           )}
