@@ -1,4 +1,3 @@
-
 import { CheckCircle, Target, Zap, TrendingUp, Download, BookOpen, Award, ArrowRight, Star, Users, Brain, Shield } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -206,7 +205,7 @@ const Features = () => {
                 </Link>
               </Button>
               <Button size="lg" variant="outline" asChild className="text-lg px-8 py-6 rounded-xl border-2 hover:bg-accent/50 transition-all duration-300">
-                <Link to="/pricing">View Pricing</Link>
+                <Link to="/plans">View Plans</Link>
               </Button>
             </div>
           </div>

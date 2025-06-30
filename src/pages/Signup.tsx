@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,56 +7,70 @@ import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Link } from "react-router-dom";
-import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react";
-import { loginUser } from "@/services/apiService";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Mail, Lock, Sparkles, User, Phone, Building, Briefcase } from "lucide-react";
+import { registerUser } from "@/services/apiService";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import { AuthContext } from "@/auth/AuthContext";
 
-const Login = () => {
+const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
-
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company_name: "",
+    position: "",
+    password: ""
+  });
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const { isAuthenticated, login } = useContext(AuthContext);
 
   useEffect(() => { if (isAuthenticated) navigate("/"); }, [isAuthenticated]);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleSignup = () => {
     setIsLoading(true);
-    // TODO: Simulate API call
+    // Simulate API call
     setTimeout(() => setIsLoading(false), 2000);
   };
 
   const validateForm = () => {
-    if (!email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) return "Invalid email address.";
-    if (!password || password.length < 8) return "Password must be at least 8 characters.";
+    if (!formData.name.trim()) return "Name is required.";
+    if (!formData.email.match(/^[^@\s]+@[^@\s]+\.[^@\s]+$/)) return "Invalid email address.";
+    if (!formData.phone.match(/^\+?\d{10,15}$/)) return "Invalid phone number.";
+    if (!formData.company_name.trim()) return "Company name is required.";
+    if (!formData.position.trim()) return "Position is required.";
+    if (formData.password.length < 8) return "Password must be at least 8 characters.";
+    if (!agreeToTerms) return "You must agree to the terms.";
     return null;
   };
 
-  const handleNormalLogin = async (e: React.FormEvent) => {
+  const handleNormalSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     const error = validateForm();
     if (error) {
-      toast({ title: "Login Error", description: error, variant: "destructive" });
+      toast({ title: "Signup Error", description: error, variant: "destructive" });
       return;
     }
     setIsLoading(true);
     try {
-      const user = await loginUser({ email, password });
-      toast({ title: "Login Successful", description: "Welcome back!", variant: "default" });
+      const user = await registerUser(formData);
+      toast({ title: "Signup Successful", description: "Welcome to SKANJO!", variant: "default" });
       login(user);
       navigate("/");
     } catch (err: any) {
-      toast({ title: "Login Error", description: err.message, variant: "destructive" });
+      toast({ title: "Signup Error", description: err.message, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -80,18 +94,18 @@ const Login = () => {
               </div>
               <div className="space-y-2">
                 <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Welcome Back
+                  Join SKANJO
                 </CardTitle>
                 <CardDescription className="text-muted-foreground/80">
-                  Sign in to your SKANJO account to continue your journey
+                  Create your account and start your journey with us
                 </CardDescription>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
-              {/* Google Login Button */}
+              {/* Google Signup Button */}
               <Button
-                onClick={handleGoogleLogin}
+                onClick={handleGoogleSignup}
                 disabled={isLoading}
                 variant="outline"
                 size="lg"
@@ -119,13 +133,31 @@ const Login = () => {
                 <Separator className="bg-border/40" />
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="bg-background px-4 text-sm text-muted-foreground/60 font-medium">
-                    or continue with email
+                    or create account with email
                   </span>
                 </div>
               </div>
 
-              {/* Normal Login Form */}
-              <form onSubmit={handleNormalLogin} className="space-y-5" disabled={isAuthenticated}>
+              {/* Normal Signup Form */}
+              <form onSubmit={handleNormalSignup} className="space-y-4" disabled={isAuthenticated}>
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium text-foreground/90">
+                    Full Name
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Enter your full name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      className="pl-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-sm font-medium text-foreground/90">
                     Email Address
@@ -136,8 +168,62 @@ const Login = () => {
                       id="email"
                       type="email"
                       placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      className="pl-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-medium text-foreground/90">
+                    Phone Number
+                  </Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="Enter your phone number"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange("phone", e.target.value)}
+                      className="pl-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="company_name" className="text-sm font-medium text-foreground/90">
+                    Company Name
+                  </Label>
+                  <div className="relative">
+                    <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="company_name"
+                      type="text"
+                      placeholder="Enter your company name"
+                      value={formData.company_name}
+                      onChange={(e) => handleInputChange("company_name", e.target.value)}
+                      className="pl-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="position" className="text-sm font-medium text-foreground/90">
+                    Position
+                  </Label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                    <Input
+                      id="position"
+                      type="text"
+                      placeholder="Enter your position"
+                      value={formData.position}
+                      onChange={(e) => handleInputChange("position", e.target.value)}
                       className="pl-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
                       required
                     />
@@ -153,9 +239,9 @@ const Login = () => {
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a strong password"
+                      value={formData.password}
+                      onChange={(e) => handleInputChange("password", e.target.value)}
                       className="pl-10 pr-10 h-12 bg-background/50 border-border/40 focus:border-primary/50 focus:bg-background/80 transition-all duration-300"
                       required
                     />
@@ -169,35 +255,34 @@ const Login = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="remember"
-                      checked={rememberMe}
-                      onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                      className="border-border/40"
-                    />
-                    <Label htmlFor="remember" className="text-sm text-muted-foreground/80 cursor-pointer">
-                      Remember me
-                    </Label>
-                  </div>
-                  <Link
-                    to="/forgot-password"
-                    className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
-                  >
-                    Forgot password?
-                  </Link>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="terms"
+                    checked={agreeToTerms}
+                    onCheckedChange={(checked) => setAgreeToTerms(checked as boolean)}
+                    className="border-border/40"
+                  />
+                  <Label htmlFor="terms" className="text-sm text-muted-foreground/80 cursor-pointer">
+                    I agree to the{" "}
+                    <Link to="/terms" className="text-primary hover:text-primary/80 transition-colors font-medium">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" className="text-primary hover:text-primary/80 transition-colors font-medium">
+                      Privacy Policy
+                    </Link>
+                  </Label>
                 </div>
 
                 <Button
                   type="submit"
-                  disabled={isLoading}
+                  disabled={isLoading || !agreeToTerms}
                   size="lg"
                   className="w-full h-12 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-[1.02] transition-all duration-300 rounded-xl shadow-lg shadow-primary/25 relative overflow-hidden group"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <span className="relative font-semibold">
-                    {isLoading ? "Signing in..." : "Sign In"}
+                    {isLoading ? "Creating Account..." : "Create Account"}
                   </span>
                   {isLoading && (
                     <div className="absolute right-4">
@@ -207,15 +292,15 @@ const Login = () => {
                 </Button>
               </form>
 
-              {/* Sign Up Link */}
+              {/* Sign In Link */}
               <div className="text-center pt-4">
                 <p className="text-sm text-muted-foreground/80">
-                  Don't have an account?{" "}
+                  Already have an account?{" "}
                   <Link
-                    to="/signup"
+                    to="/login"
                     className="text-primary hover:text-primary/80 transition-colors font-semibold"
                   >
-                    Create one now
+                    Sign in here
                   </Link>
                 </p>
               </div>
@@ -224,7 +309,7 @@ const Login = () => {
 
           {/* Trust Indicators */}
           <div className="mt-8 text-center animate-fade-in delay-500">
-            <p className="text-xs text-muted-foreground/60 mb-4">Trusted by professionals worldwide</p>
+            <p className="text-xs text-muted-foreground/60 mb-4">Join thousands of professionals worldwide</p>
             <div className="flex justify-center space-x-6 opacity-40">
               <div className="text-xs font-medium">256-bit SSL</div>
               <div className="text-xs font-medium">GDPR Compliant</div>
@@ -238,4 +323,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
