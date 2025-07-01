@@ -53,13 +53,16 @@ import {
 import { AuthContext } from '@/auth/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { getUserAnalytics, UserAnalyticsItem } from '@/services/apiService';
 
 const Analytics = () => {
   const [timeRange, setTimeRange] = useState('7d');
   const [selectedMetric, setSelectedMetric] = useState('all');
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [analytics, setAnalytics] = useState<UserAnalyticsItem[]>([]);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(true);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -71,6 +74,17 @@ const Analytics = () => {
       navigate('/login');
     }
   }, [isAuthenticated, toast, navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated || !user?.api_key) return;
+    setLoadingAnalytics(true);
+    getUserAnalytics(user.api_key)
+      .then(setAnalytics)
+      .catch((err) => {
+        toast({ title: 'Analytics Error', description: err.message, variant: 'destructive' });
+      })
+      .finally(() => setLoadingAnalytics(false));
+  }, [isAuthenticated, user, toast]);
 
   if (!isAuthenticated) {
     return null;
@@ -98,58 +112,58 @@ const Analytics = () => {
     { date: '2024-01-07', requests: 73560, users: 2678, analyses: 2012, revenue: 4560, errors: 9, responseTime: 171 }
   ];
 
-  const endpointAnalytics = [
-    { 
-      endpoint: '/api/v1/analyze/resume', 
-      requests: 456789, 
-      avgResponse: '234ms', 
-      errorRate: '0.12%',
-      status: 'healthy',
-      bandwidth: '1.2TB',
-      rateLimit: '1000/min',
-      lastUsed: '2 min ago'
-    },
-    { 
-      endpoint: '/api/v1/candidates/search', 
-      requests: 234567, 
-      avgResponse: '156ms', 
-      errorRate: '0.08%',
-      status: 'healthy',
-      bandwidth: '890GB',
-      rateLimit: '500/min',
-      lastUsed: '5 min ago'
-    },
-    { 
-      endpoint: '/api/v1/jobs/match', 
-      requests: 189023, 
-      avgResponse: '312ms', 
-      errorRate: '0.45%',
-      status: 'warning',
-      bandwidth: '2.1TB',
-      rateLimit: '250/min',
-      lastUsed: '1 min ago'
-    },
-    { 
-      endpoint: '/api/v1/skills/extract', 
-      requests: 156432, 
-      avgResponse: '189ms', 
-      errorRate: '0.15%',
-      status: 'healthy',
-      bandwidth: '567GB',
-      rateLimit: '750/min',
-      lastUsed: '8 min ago'
-    },
-    { 
-      endpoint: '/api/v1/projects/suggest', 
-      requests: 123890, 
-      avgResponse: '445ms', 
-      errorRate: '1.23%',
-      status: 'error',
-      bandwidth: '1.8TB',
-      rateLimit: '200/min',
-      lastUsed: '12 min ago'
-    }
-  ];
+  // const endpointAnalytics = [
+  //   { 
+  //     endpoint: '/api/v1/analyze/resume', 
+  //     requests: 456789, 
+  //     avgResponse: '234ms', 
+  //     errorRate: '0.12%',
+  //     status: 'healthy',
+  //     bandwidth: '1.2TB',
+  //     rateLimit: '1000/min',
+  //     lastUsed: '2 min ago'
+  //   },
+  //   { 
+  //     endpoint: '/api/v1/candidates/search', 
+  //     requests: 234567, 
+  //     avgResponse: '156ms', 
+  //     errorRate: '0.08%',
+  //     status: 'healthy',
+  //     bandwidth: '890GB',
+  //     rateLimit: '500/min',
+  //     lastUsed: '5 min ago'
+  //   },
+  //   { 
+  //     endpoint: '/api/v1/jobs/match', 
+  //     requests: 189023, 
+  //     avgResponse: '312ms', 
+  //     errorRate: '0.45%',
+  //     status: 'warning',
+  //     bandwidth: '2.1TB',
+  //     rateLimit: '250/min',
+  //     lastUsed: '1 min ago'
+  //   },
+  //   { 
+  //     endpoint: '/api/v1/skills/extract', 
+  //     requests: 156432, 
+  //     avgResponse: '189ms', 
+  //     errorRate: '0.15%',
+  //     status: 'healthy',
+  //     bandwidth: '567GB',
+  //     rateLimit: '750/min',
+  //     lastUsed: '8 min ago'
+  //   },
+  //   { 
+  //     endpoint: '/api/v1/projects/suggest', 
+  //     requests: 123890, 
+  //     avgResponse: '445ms', 
+  //     errorRate: '1.23%',
+  //     status: 'error',
+  //     bandwidth: '1.8TB',
+  //     rateLimit: '200/min',
+  //     lastUsed: '12 min ago'
+  //   }
+  // ];
 
   const userMetrics = [
     { metric: 'New Signups Today', value: '234', change: '+15%', icon: Users },
@@ -467,41 +481,36 @@ const Analytics = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Endpoint</TableHead>
-                          <TableHead>Total Requests</TableHead>
-                          <TableHead>Avg Response</TableHead>
-                          <TableHead>Error Rate</TableHead>
-                          <TableHead>Bandwidth</TableHead>
-                          <TableHead>Rate Limit</TableHead>
-                          <TableHead>Last Used</TableHead>
-                          <TableHead>Status</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {endpointAnalytics.map((endpoint, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="font-mono text-sm">{endpoint.endpoint}</TableCell>
-                            <TableCell className="font-semibold">{endpoint.requests.toLocaleString()}</TableCell>
-                            <TableCell>{endpoint.avgResponse}</TableCell>
-                            <TableCell>{endpoint.errorRate}</TableCell>
-                            <TableCell>{endpoint.bandwidth}</TableCell>
-                            <TableCell>{endpoint.rateLimit}</TableCell>
-                            <TableCell className="text-muted-foreground text-sm">{endpoint.lastUsed}</TableCell>
-                            <TableCell>
-                              <Badge className={`${getStatusColor(endpoint.status)} border`}>
-                                {getStatusIcon(endpoint.status)}
-                                <span className="ml-1 capitalize">{endpoint.status}</span>
-                              </Badge>
-                            </TableCell>
+                  {loadingAnalytics ? (
+                    <div className="flex items-center justify-center h-80">
+                      <p>Loading analytics...</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Endpoint</TableHead>
+                            <TableHead>Status Code</TableHead>
+                            <TableHead>Timestamp</TableHead>
+                            <TableHead>Request Data</TableHead>
+                            <TableHead>Response Data</TableHead>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
+                        </TableHeader>
+                        <TableBody>
+                          {analytics.map((endpoint, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-mono text-sm">{endpoint.endpoint}</TableCell>
+                              <TableCell className="font-semibold">{endpoint.status_code}</TableCell>
+                              <TableCell className="text-muted-foreground text-sm">{new Date(endpoint.timestamp).toLocaleString()}</TableCell>
+                              <TableCell className="max-w-xs truncate" title={endpoint.request_data}>{endpoint.request_data.slice(0, 40)}{endpoint.request_data.length > 40 ? '...' : ''}</TableCell>
+                              <TableCell className="max-w-xs truncate" title={endpoint.response_data}>{endpoint.response_data.slice(0, 40)}{endpoint.response_data.length > 40 ? '...' : ''}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>

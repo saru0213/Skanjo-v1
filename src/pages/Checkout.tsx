@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Check, CreditCard, Key, Copy, CheckCircle, Shield, Clock, Star, Users, Zap, Award } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { updateUserProfile, createFeatureKey } from '@/services/apiService';
+import { AuthContext } from '@/auth/AuthContext';
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -23,6 +25,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+const profileSchema = z.object({
+  industry: z.string().min(2, 'Industry is required'),
+  company_size: z.string().min(1, 'Company size is required'),
+  country: z.string().min(2, 'Country is required'),
+  job_title: z.string().min(2, 'Job title is required'),
+  website: z.string().url('Enter a valid website URL'),
+  linkedin_url: z.string().url('Enter a valid LinkedIn URL'),
+  how_did_you_hear: z.string().min(2, 'This field is required'),
+  interested_features: z.string().min(2, 'This field is required'),
+  marketing_opt_in: z.boolean(),
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
+
 const Checkout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,6 +46,7 @@ const Checkout = () => {
   const [showPayment, setShowPayment] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const { user } = useContext(AuthContext);
 
   // Get plan details from location state
   const plan = location.state?.plan || {
@@ -46,6 +63,21 @@ const Checkout = () => {
       contact: "",
       organization: "",
       numberOfPeople: "",
+    },
+  });
+
+  const profileForm = useForm<ProfileFormData>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      industry: '',
+      company_size: '',
+      country: '',
+      job_title: '',
+      website: '',
+      linkedin_url: '',
+      how_did_you_hear: '',
+      interested_features: '',
+      marketing_opt_in: false,
     },
   });
 
@@ -89,6 +121,20 @@ const Checkout = () => {
     }
   };
 
+  const handleProfileSubmit = async (data: ProfileFormData) => {
+    setIsProcessing(true);
+    try {
+      if (!user?.api_key) throw new Error('User API key missing');
+      await updateUserProfile(user.api_key, data);
+      toast({ title: 'Profile Updated', description: 'Your details have been saved. Please proceed with payment.', variant: 'default' });
+      setShowPayment(true);
+    } catch (error: any) {
+      toast({ title: 'Error', description: error.message || 'Failed to update profile.', variant: 'destructive' });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   const handlePayment = async () => {
     setIsProcessing(true);
     
@@ -105,6 +151,23 @@ const Checkout = () => {
         title: "Payment Successful!",
         description: "Your API key has been generated.",
       });
+      // Call createFeatureKey API
+      if (user?.api_key) {
+        try {
+          // Map plan.name to API value
+          let planApiValue = 'free';
+          if (plan.name === 'Professional') planApiValue = 'pro';
+          else if (plan.name === 'Enterprise') planApiValue = 'enterprise';
+          // Default is 'FREE_TRIAL' for Starter and others
+          const featureKeyRes = await createFeatureKey(user.api_key, undefined, planApiValue);
+          toast({
+            title: 'Feature Key Created',
+            description: featureKeyRes.feature_key ? `Feature Key: ${featureKeyRes.feature_key}` : featureKeyRes.message || 'Feature key created.',
+          });
+        } catch (err: any) {
+          toast({ title: 'Feature Key Error', description: err.message, variant: 'destructive' });
+        }
+      }
     } catch (error) {
       toast({
         title: "Payment Failed",
@@ -338,112 +401,101 @@ const Checkout = () => {
                     <CardDescription className="text-base text-muted-foreground">Please provide your details to continue</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <Form {...form}>
-                      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <Form {...profileForm}>
+                      <form onSubmit={profileForm.handleSubmit(async (data) => {
+                        setIsProcessing(true);
+                        try {
+                          if (!user?.api_key) throw new Error('User API key missing');
+                          await updateUserProfile(user.api_key, data);
+                          toast({ title: 'Profile Updated', description: plan.price === 'Free' ? 'Your details have been saved. Generating API key...' : 'Your details have been saved. Please proceed with payment.', variant: 'default' });
+                          if (plan.price === 'Free') {
+                            // For free plan, generate API key directly
+                            const newApiKey = generateApiKey();
+                            setApiKey(newApiKey);
+                          } else {
+                            setShowPayment(true);
+                          }
+                        } catch (error: any) {
+                          toast({ title: 'Error', description: error.message || 'Failed to update profile.', variant: 'destructive' });
+                        } finally {
+                          setIsProcessing(false);
+                        }
+                      })} className="space-y-6">
                         <div className="grid md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-base font-medium">Full Name</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    placeholder="Enter your full name" 
-                                    className="h-12 text-base border-2 focus:border-primary transition-colors"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-base font-medium">Email Address</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    type="email" 
-                                    placeholder="Enter your email" 
-                                    className="h-12 text-base border-2 focus:border-primary transition-colors"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                        
-                        <div className="grid md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="contact"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-base font-medium">Contact Number</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    placeholder="Enter your contact number" 
-                                    className="h-12 text-base border-2 focus:border-primary transition-colors"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          
-                          <FormField
-                            control={form.control}
-                            name="numberOfPeople"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-base font-medium">Team Size</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    type="number" 
-                                    placeholder="Number of people" 
-                                    className="h-12 text-base border-2 focus:border-primary transition-colors"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <FormField
-                          control={form.control}
-                          name="organization"
-                          render={({ field }) => (
+                          <FormField control={profileForm.control} name="industry" render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="text-base font-medium">Organization</FormLabel>
-                              <FormControl>
-                                <Input 
-                                  placeholder="Enter your organization name" 
-                                  className="h-12 text-base border-2 focus:border-primary transition-colors"
-                                  {...field} 
-                                />
-                              </FormControl>
+                              <FormLabel>Industry</FormLabel>
+                              <FormControl><Input placeholder="e.g. Information Technology" {...field} /></FormControl>
                               <FormMessage />
                             </FormItem>
-                          )}
-                        />
-                        
+                          )} />
+                          <FormField control={profileForm.control} name="company_size" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Company Size</FormLabel>
+                              <FormControl><Input placeholder="e.g. 11-50" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="country" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Country</FormLabel>
+                              <FormControl><Input placeholder="e.g. India" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="job_title" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Job Title</FormLabel>
+                              <FormControl><Input placeholder="e.g. Marketing Manager" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="website" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Website</FormLabel>
+                              <FormControl><Input placeholder="https://example.com" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="linkedin_url" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>LinkedIn URL</FormLabel>
+                              <FormControl><Input placeholder="https://linkedin.com/in/example" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="how_did_you_hear" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>How did you hear about us?</FormLabel>
+                              <FormControl><Input placeholder="e.g. Google Search" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                          <FormField control={profileForm.control} name="interested_features" render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Interested Features</FormLabel>
+                              <FormControl><Input placeholder="e.g. AI Matching, Analytics" {...field} /></FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )} />
+                        </div>
+                        <FormField control={profileForm.control} name="marketing_opt_in" render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Opt-in for Marketing</FormLabel>
+                            <FormControl>
+                              <input type="checkbox" checked={field.value} onChange={e => field.onChange(e.target.checked)} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )} />
                         <Button type="submit" variant="default" className="w-full h-12 text-base font-semibold" disabled={isProcessing}>
                           {isProcessing ? (
                             <div className="flex items-center space-x-2">
                               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                              <span>Processing...</span>
+                              <span>{plan.price === 'Free' ? 'Saving & Generating...' : 'Saving...'}</span>
                             </div>
                           ) : (
-                            `${plan.price === "Free" ? "Get API Key" : "Continue to Payment"}`
+                            plan.price === 'Free' ? 'Save & Get API Key' : 'Save & Continue to Payment'
                           )}
                         </Button>
                       </form>
