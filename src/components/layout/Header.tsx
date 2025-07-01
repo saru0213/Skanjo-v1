@@ -19,7 +19,7 @@ export const Header = () => {
               <div className="absolute -inset-1 bg-primary/20 rounded-full blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              SKANJO
+              Skanjo
             </span>
           </Link>
 
@@ -32,28 +32,16 @@ export const Header = () => {
               Home
             </Link>
             <Link
-              to="/features"
+              to="/solution"
               className="text-foreground/70 hover:text-primary transition-colors duration-200"
             >
-              Features
+              Product/Solution
             </Link>
             <Link
-              to="/plans"
+              to="/pricing"
               className="text-foreground/70 hover:text-primary transition-colors duration-200"
             >
-              Plans
-            </Link>
-            <Link
-              to="/docs"
-              className="text-foreground/70 hover:text-primary transition-colors duration-200"
-            >
-              Docs
-            </Link>
-            <Link
-              to="/analytics"
-              className="text-foreground/70 hover:text-primary transition-colors duration-200"
-            >
-              Analytics
+              Pricing
             </Link>
           </nav>
 
@@ -65,14 +53,18 @@ export const Header = () => {
               </Button>
             ) : (
               <>
-                <Button variant="ghost" asChild>
-                  <Link to="/login">Sign In</Link>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-200 rounded-xl"
+                >
+                  <Link to="/signup">Sign Up</Link>
                 </Button>
                 <Button
                   asChild
                   className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 transform hover:scale-105 transition-all duration-200 rounded-xl shadow-lg shadow-primary/25"
                 >
-                  <Link to="/analyze">Get Started</Link>
+                  <a href="#trial">Start Free Trial</a>
                 </Button>
               </>
             )}
@@ -102,22 +94,16 @@ export const Header = () => {
                 Home
               </Link>
               <Link
-                to="/features"
+                to="/solution"
                 className="block text-foreground/70 hover:text-primary transition-colors duration-200"
               >
-                Features
+                Product/Solution
               </Link>
               <Link
-                to="/plans"
+                to="/pricing"
                 className="block text-foreground/70 hover:text-primary transition-colors duration-200"
               >
-                Plans
-              </Link>
-              <Link
-                to="/docs"
-                className="block text-foreground/70 hover:text-primary transition-colors duration-200"
-              >
-                Docs
+                Pricing
               </Link>
               <div className="pt-4 space-y-3">
                 {isAuthenticated ? (
@@ -126,14 +112,18 @@ export const Header = () => {
                   </Button>
                 ) : (
                   <>
-                    <Button variant="ghost" className="w-full" asChild>
-                      <Link to="/login">Sign In</Link>
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 rounded-xl"
+                    >
+                      <Link to="/signup">Sign Up</Link>
                     </Button>
                     <Button
                       className="w-full bg-gradient-to-r from-primary to-primary/80 rounded-xl"
                       asChild
                     >
-                      <Link to="/analyze">Get Started</Link>
+                      <Link to="/trial">Start Free Trial</Link>
                     </Button>
                   </>
                 )}
